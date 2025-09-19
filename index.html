@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>StudyDash — Kamilla ❤️</title>
+<style>
+  /* ---------- Theme & layout ---------- */
+  :root{
+    --bg: #fff8fb;
+    --card: #ffffff;
+    --accent: #d94b78;
+    --muted: #6b6b6b;
+    --glass: rgba(255,255,255,0.6);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(1200px 600px at 10% 20%, #ffeef6 0%, transparent 12%),
+      radial-gradient(900px 400px at 90% 80%, #fff0f3 0%, transparent 10%),
+      var(--bg);
+    color:#111;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:18px 22px;
+    background: linear-gradient(90deg, #ffd9e6, #ffebf2);
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    position:relative;
+    z-index:40;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:56px;height:56px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(180deg,#ff8fb0,#ff6f93);
+    color:white;font-weight:700;font-size:20px;box-shadow:0 6px 18px rgba(217,75,120,0.18);
+  }
+  h1{margin:0;font-size:18px}
+  .greeting{color:var(--muted);font-size:13px}
+
+  .controls{display:flex;gap:10px;align-items:center}
+  select, button{padding:8px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06); background:white}
+  button.primary{background:var(--accent);color:white;border:none}
+
+  main.container{
+    max-width:1100px;margin:22px auto;padding:18px;display:flex;gap:18px;flex-wrap:wrap;
+  }
+
+  .panel{
+    background:var(--card);
+    border-radius:12px;
+    box-shadow:0 6px 20px rgba(13,17,25,0.04);
+    padding:14px;
+  }
+
+  .left{flex:1 1 620px;min-width:300px}
+  .right{width:360px;flex:0 0 360px;min-width:280px}
+
+  h2{margin:0 0 8px 0;color:var(--accent)}
+  label{display:block;font-size:13px;margin-top:8px;color:var(--muted)}
+  textarea,input,select{width:100%;padding:10px;border-radius:8px;border:1px solid #eef2f7;margin-top:6px;background:linear-gradient(#fff,#fff)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .card{padding:12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fff);border:1px solid #f2e8ef}
+
+  .file-list{margin-top:10px}
+  .file-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:#fff6fb;margin-bottom:8px}
+  .file-item small{color:var(--muted);font-size:12px}
+
+  /* recorder */
+  .recorder { display:flex;gap:8px;align-items:center;flex-wrap:wrap }
+  audio{margin-top:8px;width:100%}
+
+  /* float hearts subtle */
+  .heart { position:fixed; font-size:16px; color:#ff5c85; opacity:0.9; pointer-events:none; transform:translateY(0); transition: transform 10s linear, opacity 4s linear; z-index:2 }
+  .heart.slow { animation: floatSlow 10s linear infinite; }
+  @keyframes floatSlow {
+    0% {transform:translateY(0) scale(1); opacity:1}
+    100% {transform:translateY(-680px) scale(0.6); opacity:0}
+  }
+
+  /* small helpers */
+  .muted{color:var(--muted);font-size:13px}
+  .small{font-size:13px}
+  .pill{background:#fff0f6;padding:6px 10px;border-radius:999px;color:var(--accent);border:1px solid rgba(217,75,120,0.08)}
+  .notice{font-size:13px;color:#5a5a5a;margin-top:6px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+  /* responsive */
+  @media (max-width:980px){ .right{flex-basis:100%;width:auto} .left{flex-basis:100%} header{flex-direction:column;align-items:flex-start;gap:10px} }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">K</div>
+      <div>
+        <h1>StudyDash</h1>
+        <div class="greeting" id="greeting">Welcome, Kamilla ❤️</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <label class="small" for="lang">Language</label>
+      <select id="lang">
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+        <option value="ar">العربية</option>
+      </select>
+      <button id="settingsBtn">Settings</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel left">
+      <div class="card">
+        <h2 id="qa_title">Quick tools</h2>
+
+        <label id="ai_label">AI tools</label>
+        <div class="row">
+          <select id="aiMode">
+            <option value="local">Local fallback</option>
+            <option value="api">Use API (requires key)</option>
+          </select>
+
+          <button id="summarizeBtn" class="primary">Summarize</button>
+          <button id="generateBtn" class="primary">Generate problems</button>
+        </div>
+
+        <label for="aiInput" id="paste_label">Paste text or lecture notes</label>
+        <textarea id="aiInput" rows="6" placeholder="Paste lecture notes, slides text, or code..."></textarea>
+
+        <label for="aiOutput" id="result_label">Result</label>
+        <textarea id="aiOutput" rows="8" readonly placeholder="Results appear here..."></textarea>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h2 id="notes_title">Lecture Notes</h2>
+        <label for="noteText" id="note_label">Quick jot</label>
+        <textarea id="noteText" rows="6" placeholder="Type quick notes here..."></textarea>
+        <div class="actions">
+          <button id="saveNote">Save note</button>
+          <button id="exportNotes">Export notes (.txt)</button>
+        </div>
+        <div id="savedNotes" class="file-list" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <aside class="panel right">
+      <div class="card">
+        <h2 id="files_title">Files & lectures</h2>
+        <label id="add_files_label">Add files (pdf, slides, code)</label>
+        <input id="fileInput" type="file" multiple />
+
+        <div id="fileList" class="file-list"></div>
+      </div>
+
+      <div class="card" style="margin-top:12px">
+        <h2 id="rec_title">Lecture recorder</h2>
+
+        <label class="small"><input id="enableLive" type="checkbox" /> Enable live transcription (browser)</label>
+        <div class="recorder">
+          <button id="recStart">Start</button>
+          <button id="recStop" disabled>Stop</button>
+          <select id="recFormat"><option value="audio/webm">webm</option><option value="audio/wav">wav</option></select>
+        </div>
+
+        <div id="recordings" class="file-list" style="margin-top:10px"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Settings modal (simple) -->
+  <dialog id="settings" class="panel" style="width:90%;max-width:600px;">
+    <form method="dialog">
+      <h3>Settings</h3>
+      <label>Friend's name (greeting)</label>
+      <input id="friendName" placeholder="Kamilla" />
+
+      <label>OpenAI API key (optional)</label>
+      <input id="apiKey" placeholder="sk-..." />
+
+      <div class="notice">If you add a key here and choose API mode, the app will send text or audio you choose to the provider's endpoint. If you prefer privacy keep API mode off and use local features.</div>
+
+      <div class="actions" style="margin-top:12px">
+        <button id="saveSettings">Save</button>
+        <button id="closeSettings">Close</button>
+      </div>
+    </form>
+  </dialog>
+
+<script>
+/* ========= App: IndexedDB, Recorder, Transcription, AI hooks, i18n, hearts ========= */
+
+/* ---------- Simple i18n strings ---------- */
+const STR = {
+  en: {
+    welcome: "Welcome, {name} ❤️",
+    qa_title: "Quick tools",
+    ai_label: "AI tools",
+    paste_label: "Paste text or lecture notes",
+    result_label: "Result",
+    notes_title: "Lecture Notes",
+    note_label: "Quick jot",
+    files_title: "Files & lectures",
+    add_files_label: "Add files (pdf, slides, code)",
+    rec_title: "Lecture recorder",
+    enable_live: "Enable live transcription (browser)",
+    settings_title: "Settings",
+    save_success: "Saved."
+  },
+  fr: {
+    welcome: "Bienvenue, {name} ❤️",
+    qa_title: "Outils rapides",
+    ai_label: "Outils IA",
+    paste_label: "Collez le texte ou les notes de cours",
+    result_label: "Résultat",
+    notes_title: "Notes de cours",
+    note_label: "Note rapide",
+    files_title: "Fichiers et cours",
+    add_files_label: "Ajouter des fichiers (pdf, slides, code)",
+    rec_title: "Enregistreur",
+    enable_live: "Activer la transcription en direct (navigateur)",
+    settings_title: "Paramètres",
+    save_success: "Enregistré."
+  },
+  ar: {
+    welcome: "أهلا، {name} ❤️",
+    qa_title: "أدوات سريعة",
+    ai_label: "أدوات ذكاء اصطناعي",
+    paste_label: "ألصق النص أو ملاحظات المحاضرة",
+    result_label: "النتيجة",
+    notes_title: "ملاحظات المحاضرة",
+    note_label: "ملاحظة سريعة",
+    files_title: "الملفات والمحاضرات",
+    add_files_label: "أضف ملفات (pdf, شرائح, كود)",
+    rec_title: "مسجل المحاضرة",
+    enable_live: "تفعيل التفريغ الصوتي المباشر (المتصفح)",
+    settings_title: "الإعدادات",
+    save_success: "تم الحفظ."
+  }
+};
+
+function t(key){
+  const lang = localStorage.getItem("studydash_lang") || "en";
+  const s = STR[lang] && STR[lang][key] ? STR[lang][key] : STR["en"][key] || "";
+  return s;
+}
+
+/* ---------- DOM refs ---------- */
+const langEl = document.getElementById("lang");
+const greetingEl = document.getElementById("greeting");
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsDialog = document.getElementById("settings");
+const friendNameEl = document.getElementById("friendName");
+const apiKeyEl = document.getElementById("apiKey");
+const saveSettingsBtn = document.getElementById("saveSettings");
+const closeSettingsBtn = document.getElementById("closeSettings");
+
+const fileInput = document.getElementById("fileInput");
+const fileList = document.getElementById("fileList");
+
+const recStart = document.getElementById("recStart");
+const recStop = document.getElementById("recStop");
+const recFormat = document.getElementById("recFormat");
+const recordingsEl = document.getElementById("recordings");
+const enableLive = document.getElementById("enableLive");
+
+const aiMode = document.getElementById("aiMode");
+const aiInput = document.getElementById("aiInput");
+const aiOutput = document.getElementById("aiOutput");
+const summarizeBtn = document.getElementById("summarizeBtn");
+const generateBtn = document.getElementById("generateBtn");
+
+const noteText = document.getElementById("noteText");
+const saveNoteBtn = document.getElementById("saveNote");
+const exportNotesBtn = document.getElementById("exportNotes");
+const savedNotesEl = document.getElementById("savedNotes");
+
+/* ---------- IndexedDB setup ---------- */
+const DB_NAME = "studydash-db-v1";
+const STORE_FILES = "files";
+const STORE_RECORDS = "records";
+const STORE_NOTES = "notes";
+let db;
+
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const r = indexedDB.open(DB_NAME,1);
+    r.onupgradeneeded = e => {
+      const idb = e.target.result;
+      if(!idb.objectStoreNames.contains(STORE_FILES)) idb.createObjectStore(STORE_FILES, { keyPath: "id" });
+      if(!idb.objectStoreNames.contains(STORE_RECORDS)) idb.createObjectStore(STORE_RECORDS, { keyPath: "id" });
+      if(!idb.objectStoreNames.contains(STORE_NOTES)) idb.createObjectStore(STORE_NOTES, { keyPath: "id" });
+    };
+    r.onsuccess = e => { db = e.target.result; resolve(db) };
+    r.onerror = e => reject(e);
+  });
+}
+function idbPut(store, item){
+  return new Promise((res,rej)=>{
+    const tx = db.transaction(store,"readwrite");
+    const st = tx.objectStore(store);
+    const q = st.put(item);
+    q.onsuccess = ()=> res(q.result);
+    q.onerror = e => rej(e);
+  });
+}
+function idbGetAll(store){
+  return new Promise((res,rej)=>{
+    const tx = db.transaction(store,"readonly");
+    const st = tx.objectStore(store);
+    const q = st.getAll();
+    q.onsuccess = ()=> res(q.result);
+    q.onerror = e => rej(e);
+  });
+}
+function idbDelete(store, key){
+  return new Promise((res,rej)=>{
+    const tx = db.transaction(store,"readwrite");
+    const st = tx.objectStore(store);
+    const q = st.delete(key);
+    q.onsuccess = ()=> res();
+    q.onerror = e => rej(e);
+  });
+}
+
+/* ---------- util ---------- */
+function uid(){ return crypto.randomUUID(); }
+function fmtSize(n){
+  if(n < 1024) return n + " B";
+  if(n < 1024*1024) return (n/1024).toFixed(1) + " KB";
+  return (n/1024/1024).toFixed(2) + " MB";
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"'`]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;',"`":'&#96;'}[c])); }
+function showNotice(msg, timeout=2000){ const el = document.createElement("div"); el.className="notice"; el.textContent = msg; document.body.appendChild(el); setTimeout(()=> el.remove(), timeout); }
+
+/* ---------- i18n apply ---------- */
+function applyTranslations(){
+  document.getElementById("qa_title").textContent = t("qa_title");
+  document.getElementById("ai_label").textContent = t("ai_label");
+  document.getElementById("paste_label").textContent = t("paste_label");
+  document.getElementById("result_label").textContent = t("result_label");
+  document.getElementById("notes_title").textContent = t("notes_title");
+  document.getElementById("note_label").textContent = t("note_label");
+  document.getElementById("files_title").textContent = t("files_title");
+  document.getElementById("add_files_label").textContent = t("add_files_label");
+  document.getElementById("rec_title").textContent = t("rec_title");
+}
+
+/* ---------- greeting ---------- */
+function applyGreeting(){
+  const name = localStorage.getItem("studydash_friend") || "Kamilla";
+  const template = t("welcome") || "Welcome, {name} ❤️";
+  greetingEl.textContent = template.replace("{name}", name);
+  friendNameEl.value = name;
+}
+
+/* ---------- Files UI ---------- */
+fileInput.addEventListener("change", async (ev) => {
+  const files = Array.from(ev.target.files || []);
+  for(const f of files){
+    const id = uid();
+    const ab = await f.arrayBuffer();
+    await idbPut(STORE_FILES, { id, name: f.name, type: f.type, size: f.size, created: Date.now(), data: ab });
+  }
+  fileInput.value = "";
+  renderFileList();
+});
+async function renderFileList(){
+  const files = await idbGetAll(STORE_FILES);
+  fileList.innerHTML = "";
+  if(files.length === 0){ fileList.innerHTML = "<div class='muted'>No files yet</div>"; return; }
+  files.sort((a,b)=>b.created - a.created);
+  for(const f of files){
+    const div = document.createElement("div"); div.className="file-item";
+    div.innerHTML = `<div><strong>${escapeHtml(f.name)}</strong><br/><small>${fmtSize(f.size)}</small></div>`;
+    const actions = document.createElement("div");
+    const dl = document.createElement("button"); dl.textContent="Download";
+    dl.addEventListener("click", ()=>{
+      const blob = new Blob([f.data], { type: f.type || "application/octet-stream" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a"); a.href = url; a.download = f.name; a.click();
+      URL.revokeObjectURL(url);
+    });
+    const del = document.createElement("button"); del.textContent="Delete";
+    del.addEventListener("click", async ()=> { await idbDelete(STORE_FILES, f.id); renderFileList(); });
+    actions.appendChild(dl); actions.appendChild(del);
+    div.appendChild(actions);
+    fileList.appendChild(div);
+  }
+}
+
+/* ---------- Recorder + live transcription ---------- */
+let mediaRecorder = null;
+let recordedChunks = [];
+let liveRecognizer = null;
+let liveTranscript = "";
+
+recStart.addEventListener("click", async ()=>{
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mime = recFormat.value || "audio/webm";
+    mediaRecorder = new MediaRecorder(stream, { mimeType: mime });
+    recordedChunks = [];
+    mediaRecorder.ondataavailable = e => { if(e.data && e.data.size) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(recordedChunks, { type: recordedChunks[0]?.type || mime });
+      const id = uid();
+      const ab = await blob.arrayBuffer();
+      await idbPut(STORE_RECORDS, { id, name:`recording-${new Date().toISOString()}.${blob.type.split("/")[1]||'webm'}`, size: blob.size, created: Date.now(), data: ab, mime: blob.type, transcript: liveTranscript || "" });
+      liveTranscript = "";
+      stopLiveRecognizer();
+      renderRecordings();
+    };
+
+    // live transcription if enabled and supported
+    if(enableLive.checked && setupLiveRecognizer()){
+      liveTranscript = "";
+      startLiveRecognizer();
+    }
+    mediaRecorder.start();
+    recStart.disabled = true; recStop.disabled = false;
+  }catch(err){
+    alert("Recording failed: " + (err && err.message ? err.message : err));
+  }
+});
+
+recStop.addEventListener("click", ()=>{
+  if(mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+  recStart.disabled = false; recStop.disabled = true;
+});
+
+/* Live speech recognition using Web Speech API */
+function setupLiveRecognizer(){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRecognition) return false;
+  liveRecognizer = new SpeechRecognition();
+  liveRecognizer.lang = (localStorage.getItem("studydash_lang")==="ar") ? "ar-EG" : (localStorage.getItem("studydash_lang")==="fr" ? "fr-FR" : "en-US");
+  liveRecognizer.interimResults = true;
+  liveRecognizer.maxAlternatives = 1;
+  liveRecognizer.onresult = ev => {
+    let interim = "", final = "";
+    for(let i=ev.resultIndex;i<ev.results.length;i++){
+      if(ev.results[i].isFinal) final += ev.results[i][0].transcript + " ";
+      else interim += ev.results[i][0].transcript + " ";
+    }
+    liveTranscript = (final + interim).trim();
+    showLiveBubble(liveTranscript || "Listening...");
+  };
+  liveRecognizer.onerror = e => { console.warn("Speech recog error", e); };
+  return true;
+}
+function startLiveRecognizer(){ if(liveRecognizer) try{ liveRecognizer.start(); }catch(e){} }
+function stopLiveRecognizer(){ if(liveRecognizer) try{ liveRecognizer.stop(); }catch(e){} removeLiveBubble(); }
+
+/* Live bubble UI */
+function showLiveBubble(text){
+  let b = document.getElementById("live-bubble");
+  if(!b){ b = document.createElement("div"); b.id="live-bubble"; b.style.position="fixed"; b.style.right="16px"; b.style.bottom="16px"; b.style.background="#fff"; b.style.padding="10px"; b.style.borderRadius="10px"; b.style.boxShadow="0 6px 20px rgba(0,0,0,0.08)"; b.style.zIndex=60; b.style.maxWidth="320px"; b.style.fontSize="13px"; document.body.appendChild(b); }
+  b.textContent = text;
+}
+function removeLiveBubble(){ const b = document.getElementById("live-bubble"); if(b) b.remove(); }
+
+/* Render recordings */
+async function renderRecordings(){
+  const recs = await idbGetAll(STORE_RECORDS);
+  recordingsEl.innerHTML = "";
+  if(!recs || recs.length===0){ recordingsEl.innerHTML = "<div class='muted'>No recordings yet</div>"; return; }
+  recs.sort((a,b)=>b.created - a.created);
+  for(const r of recs){
+    const div = document.createElement("div"); div.className="file-item";
+    const blob = new Blob([r.data], { type: r.mime });
+    const url = URL.createObjectURL(blob);
+    const meta = document.createElement("div"); meta.style.flex="1";
+    meta.innerHTML = `<strong>${escapeHtml(r.name)}</strong><br/><small>${new Date(r.created).toLocaleString()}</small>`;
+    const audio = document.createElement("audio"); audio.controls=true; audio.src = url;
+    const actions = document.createElement("div");
+    const dl = document.createElement("button"); dl.textContent="Download";
+    dl.addEventListener("click", ()=>{ const a=document.createElement("a"); a.href=url; a.download=r.name; a.click(); });
+    const trans = document.createElement("button"); trans.textContent="Transcribe (API)";
+    trans.addEventListener("click", ()=> transcribeRecordingAPI(r.id, blob, trans));
+    const del = document.createElement("button"); del.textContent="Delete";
+    del.addEventListener("click", async ()=> { await idbDelete(STORE_RECORDS, r.id); renderRecordings(); });
+
+    actions.appendChild(dl); actions.appendChild(trans); actions.appendChild(del);
+    div.appendChild(meta);
+    div.appendChild(audio);
+    div.appendChild(actions);
+
+    if(r.transcript){
+      const tdiv = document.createElement("div"); tdiv.style.marginTop="8px"; tdiv.style.padding="8px"; tdiv.style.background="#fff5f9"; tdiv.style.borderRadius="8px";
+      tdiv.innerHTML = `<strong>Transcript</strong><div style="white-space:pre-wrap;margin-top:6px">${escapeHtml(r.transcript)}</div>`;
+      div.appendChild(tdiv);
+    }
+
+    recordingsEl.appendChild(div);
+  }
+}
+
+/* Transcribe recording via API (example OpenAI-style / whisper) */
+async function transcribeRecordingAPI(recordId, blob, buttonEl){
+  const key = localStorage.getItem("studydash_openai_key") || apiKeyEl.value.trim();
+  if(!key){ alert("No API key set. Add one in settings to transcribe via API."); return; }
+  buttonEl.disabled = true; const prev = buttonEl.textContent; buttonEl.textContent = "Working...";
+  try{
+    const fd = new FormData();
+    fd.append("file", blob, "recording." + (blob.type.split("/")[1]||"webm"));
+    fd.append("model", "whisper-1");
+    const resp = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method:"POST",
+      headers: { "Authorization": `Bearer ${key}` },
+      body: fd
+    });
+    if(!resp.ok){ const txt = await resp.text(); throw new Error("Transcription error: " + resp.status + " " + txt); }
+    const j = await resp.json();
+    const text = j.text || j.transcript || "";
+    // attach to record
+    const recs = await idbGetAll(STORE_RECORDS);
+    const rec = recs.find(x=>x.id===recordId);
+    if(rec){ rec.transcript = text; await idbPut(STORE_RECORDS, rec); }
+    // also save as note
+    await idbPut(STORE_NOTES, { id: uid(), text: `Transcript (${rec ? rec.name : "recording"}):\n\n${text}`, created: Date.now() });
+    renderRecordings(); renderNotes();
+  }catch(err){
+    alert("Transcription failed: " + (err.message || err));
+  }finally{
+    buttonEl.disabled = false; buttonEl.textContent = prev;
+  }
+}
+
+/* ---------- Notes ---------- */
+saveNoteBtn.addEventListener("click", async ()=>{
+  const text = noteText.value.trim();
+  if(!text) return alert("Write something first.");
+  await idbPut(STORE_NOTES, { id: uid(), text, created: Date.now() });
+  noteText.value = "";
+  renderNotes();
+});
+exportNotesBtn.addEventListener("click", async ()=>{
+  const notes = await idbGetAll(STORE_NOTES);
+  const payload = notes.map(n => `${new Date(n.created).toLocaleString()}\n${n.text}\n\n---\n`).join("");
+  const blob = new Blob([payload], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a"); a.href = url; a.download = "notes.txt"; a.click();
+  URL.revokeObjectURL(url);
+});
+async function renderNotes(){
+  const notes = await idbGetAll(STORE_NOTES);
+  savedNotesEl.innerHTML = "";
+  if(!notes || notes.length===0){ savedNotesEl.innerHTML = "<div class='muted'>No notes</div>"; return; }
+  notes.sort((a,b)=>b.created - a.created);
+  for(const n of notes){
+    const div = document.createElement("div"); div.className="file-item";
+    div.innerHTML = `<div><small>${new Date(n.created).toLocaleString()}</small><div style="margin-top:6px">${escapeHtml(n.text.slice(0,200))}${n.text.length>200?'...':''}</div></div>`;
+    const btn = document.createElement("button"); btn.textContent="Open";
+    btn.addEventListener("click", ()=> {
+      const dlg = document.createElement("dialog");
+      dlg.style.padding="14px";
+      dlg.innerHTML = `<form method="dialog"><h4>Note</h4><pre style="white-space:pre-wrap">${escapeHtml(n.text)}</pre><div style="display:flex;gap:8px;margin-top:8px"><button>Close</button><button id="del">Delete</button></div></form>`;
+      document.body.appendChild(dlg);
+      dlg.showModal();
+      dlg.querySelector("#del").addEventListener("click", async ()=> { await idbDelete(STORE_NOTES, n.id); dlg.close(); renderNotes(); });
+      dlg.addEventListener("close", ()=> dlg.remove());
+    });
+    div.appendChild(btn);
+    savedNotesEl.appendChild(div);
+  }
+}
+
+/* ---------- Simple local AI helpers + API hook ---------- */
+function localSummarize(text){
+  // naive extractive top sentences
+  const sents = text.match(/[^.!?]+[.!?]?/g) || [text];
+  const words = text.toLowerCase().replace(/[^\w\s]/g," ").split(/\s+/).filter(Boolean);
+  const freq = {};
+  for(const w of words){ if(w.length<3) continue; freq[w]=(freq[w]||0)+1; }
+  const scores = sents.map(s => {
+    const ws = s.toLowerCase().split(/\s+/);
+    let sc = 0;
+    for(const w of ws) if(freq[w]) sc += freq[w];
+    sc += Math.min(5, ws.length/10);
+    return { s, sc };
+  });
+  scores.sort((a,b)=>b.sc - a.sc);
+  const top = scores.slice(0, Math.min(5, scores.length)).map(x=>x.s.trim());
+  return top.join("\n\n");
+}
+function localGenerateProblems(text){
+  const words = text.toLowerCase().replace(/[^\w\s]/g," ").split(/\s+/).filter(Boolean);
+  const freq = {};
+  for(const w of words) if(w.length>3) freq[w] = (freq[w]||0)+1;
+  const keywords = Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,5).map(x=>x[0]);
+  if(keywords.length===0) keywords.push("algorithm");
+  return keywords.map((k,i)=>`${i+1}. Topic: ${k}\nProblem: Create an example and analyze complexity related to ${k}.\nDifficulty: ${i===0?'medium':i===1?'easy':'hard'}\nHint: Consider data structures and worst-case behavior.`).join("\n\n");
+}
+
+summarizeBtn.addEventListener("click", async ()=>{
+  const txt = aiInput.value.trim();
+  if(!txt) return alert("Paste some text first.");
+  aiOutput.value = "Working...";
+  if(aiMode.value === "local"){
+    aiOutput.value = localSummarize(txt);
+    return;
+  }
+  const key = localStorage.getItem("studydash_openai_key") || apiKeyEl.value.trim();
+  if(!key){ alert("No API key set. Put it in Settings or use Local mode."); aiOutput.value=""; return; }
+  try{
+    const prompt = `Summarize the following lecture/notes into concise bullet points highlighting main concepts and examples:\n\n${txt}`;
+    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Authorization": `Bearer ${key}` },
+      body: JSON.stringify({ model: "gpt-4o-mini", messages:[{role:"user",content:prompt}], max_tokens:700 })
+    });
+    if(!resp.ok){ const t=await resp.text(); throw new Error(t); }
+    const j = await resp.json();
+    aiOutput.value = j.choices?.[0]?.message?.content || JSON.stringify(j,null,2);
+  }catch(err){
+    aiOutput.value = "Error: " + (err.message || err);
+  }
+});
+
+generateBtn.addEventListener("click", async ()=>{
+  const txt = aiInput.value.trim();
+  if(!txt) return alert("Paste some text first.");
+  aiOutput.value = "Working...";
+  if(aiMode.value === "local"){
+    aiOutput.value = localGenerateProblems(txt);
+    return;
+  }
+  const key = localStorage.getItem("studydash_openai_key") || apiKeyEl.value.trim();
+  if(!key){ alert("No API key set. Put it in Settings or use Local mode."); aiOutput.value=""; return; }
+  try{
+    const prompt = `Create 5 practice problems for a computer science student based on the material below. For each problem give a short hint and difficulty:\n\n${txt}`;
+    const resp = await fetch("https://api.openai.com/v1/chat/completions", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json", "Authorization": `Bearer ${key}` },
+      body: JSON.stringify({ model: "gpt-4o-mini", messages:[{role:"user",content:prompt}], max_tokens:700 })
+    });
+    if(!resp.ok){ const t = await resp.text(); throw new Error(t); }
+    const j = await resp.json();
+    aiOutput.value = j.choices?.[0]?.message?.content || JSON.stringify(j,null,2);
+  }catch(err){
+    aiOutput.value = "Error: " + (err.message || err);
+  }
+});
+
+/* ---------- Settings and local storage ---------- */
+settingsBtn.addEventListener("click", ()=> settingsDialog.showModal());
+closeSettingsBtn.addEventListener("click", ()=> settingsDialog.close());
+saveSettingsBtn.addEventListener("click", ()=>{
+  const name = friendNameEl.value.trim() || "Kamilla";
+  const key = apiKeyEl.value.trim();
+  localStorage.setItem("studydash_friend", name);
+  if(key) localStorage.setItem("studydash_openai_key", key);
+  applyGreeting();
+  settingsDialog.close();
+  applyTranslations();
+  showNotice(t("save_success"));
+});
+
+/* ---------- Language switcher ---------- */
+langEl.value = localStorage.getItem("studydash_lang") || "en";
+langEl.addEventListener("change", ()=> { localStorage.setItem("studydash_lang", langEl.value); applyTranslations(); applyGreeting(); });
+applyTranslations(); applyGreeting();
+
+/* ---------- hearts (subtle, slow) ---------- */
+function createHeart(){
+  const el = document.createElement("div"); el.className="heart slow"; el.textContent="❤️";
+  el.style.left = Math.random()* (window.innerWidth - 40) + "px";
+  el.style.bottom = "-10px";
+  el.style.opacity = (0.3 + Math.random()*0.7).toString();
+  el.style.fontSize = (12 + Math.random()*14) + "px";
+  document.body.appendChild(el);
+  // animate via transform, then remove after a while
+  setTimeout(()=>{ el.style.transform = `translateY(-${600 + Math.random()*400}px) scale(${0.6 + Math.random()*0.6})`; el.style.opacity = "0"; }, 80);
+  setTimeout(()=> el.remove(), 11000);
+}
+setInterval(createHeart, 900);
+
+/* ---------- startup ---------- */
+(async function init(){
+  await openDB();
+  // set default friend name if not set
+  if(!localStorage.getItem("studydash_friend")) localStorage.setItem("studydash_friend", "Kamilla");
+  if(localStorage.getItem("studydash_openai_key")) apiKeyEl.value = localStorage.getItem("studydash_openai_key");
+  renderFileList();
+  renderRecordings();
+  renderNotes();
+})();
+
+/* ---------- small graceful features: drag+drop for files ---------- */
+window.addEventListener("dragover", e => e.preventDefault());
+window.addEventListener("drop", async (e) => {
+  e.preventDefault();
+  if(!e.dataTransfer) return;
+  const files = Array.from(e.dataTransfer.files || []);
+  if(files.length === 0) return;
+  for(const f of files){
+    const id = uid();
+    const ab = await f.arrayBuffer();
+    await idbPut(STORE_FILES, { id, name: f.name, type: f.type, size: f.size, created: Date.now(), data: ab });
+  }
+  renderFileList();
+});
+
+/* ---------- end of script ---------- */
+</script>
+</body>
+</html>
